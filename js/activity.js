@@ -30,18 +30,24 @@ define(function (require) {
         var touchEnabled = createjs.Touch.enable(stage);
         if (touchEnabled) {
             console.log("Touch enabled");
+            stage.addEventListener("stagemousedown", handlePressDown);
+            stage.addEventListener("stagemouseup", handlePressUp);
         } else {
             console.log("Touch not enabled");
+            stage.addEventListener("stagemousedown", handleMouseDown);
+            stage.addEventListener("stagemouseup", handleMouseUp);
         }
         createjs.Ticker.setFPS(24);
-
-        stage.addEventListener("stagemousedown", handleMouseDown);
-        stage.addEventListener("stagemouseup", handleMouseUp);
 
         // set up our defaults:
         var strokeColor = "#309090";
         var strokeSize = 40;
         var shape;
+
+        // For touch interaction
+        var pointers = [];
+
+        // For mouse only interaction
         var oldPoint;
         var oldMidPoint;
 
@@ -64,7 +70,7 @@ define(function (require) {
         function handleMouseMove(event) {
             console.log("move " + event.pointerID);
             var midPoint = new createjs.Point(oldPoint.x + stage.mouseX>>1,
-                                              oldPoint.y+stage.mouseY>>1);
+                                              oldPoint.y + stage.mouseY>>1);
 
             shape.graphics.clear().setStrokeStyle(strokeSize, 'round', 'round').
                 beginStroke(strokeColor).moveTo(midPoint.x, midPoint.y).
@@ -75,6 +81,47 @@ define(function (require) {
 
             oldMidPoint.x = midPoint.x;
             oldMidPoint.y = midPoint.y;
+
+            stage.update();
+        }
+
+        function handlePressDown(event) {
+            console.log("down " + event.pointerID);
+            var pointerData = {};
+            pointerData.oldPoint = new createjs.Point(stage.mouseX,
+                                                      stage.mouseY);
+            pointerData.oldMidPoint = oldPoint;
+            pointers[event.pointerID] = pointerData;
+            if (pointers.length == 1) {
+                stage.addEventListener("stagemousemove" , handlePressMove);
+            }
+        }
+
+        function handlePressUp(event) {
+            console.log("up " + event.pointerID);
+            pointers.splice(pointers[event.pointerID], 1);
+            if (pointers.length == 0) {
+                stage.removeEventListener("stagemousemove" , handlePressMove);
+            }
+        }
+
+        function handlePressMove(event) {
+            console.log("move " + event.pointerID);
+            pointerData = pointers[event.pointerID];
+            var midPoint = new createjs.Point(
+                pointerData.oldPoint.x + stage.mouseX>>1,
+                pointerData.oldPoint.y + stage.mouseY>>1);
+
+            shape.graphics.clear().setStrokeStyle(strokeSize, 'round', 'round').
+                beginStroke(strokeColor).moveTo(midPoint.x, midPoint.y).
+                curveTo(pointerData.oldPoint.x, pointerData.oldPoint.y,
+                        pointerData.oldMidPoint.x, pointerData.oldMidPoint.y);
+
+            pointerData.oldPoint.x = stage.mouseX;
+            pointerData.oldPoint.y = stage.mouseY;
+
+            pointerData.oldMidPoint.x = midPoint.x;
+            pointerData.oldMidPoint.y = midPoint.y;
 
             stage.update();
         }
