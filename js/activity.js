@@ -27,7 +27,12 @@ define(function (require) {
         //check to see if we are running in a browser with touch support
         stage.autoClear = false;
         stage.enableDOMEvents(true);
-        createjs.Touch.enable(stage);
+        var touchEnabled = createjs.Touch.enable(stage);
+        if (touchEnabled) {
+            console.log("Touch enabled");
+        } else {
+            console.log("Touch not enabled");
+        }
         createjs.Ticker.setFPS(24);
 
         stage.addEventListener("stagemousedown", handleMouseDown);
