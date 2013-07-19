@@ -50,16 +50,19 @@ define(function (require) {
 
         // add handler for stage mouse events:
         function handleMouseDown(event) {
+            console.log("down " + event.pointerID);
             oldPoint = new createjs.Point(stage.mouseX, stage.mouseY);
             oldMidPoint = oldPoint;
             stage.addEventListener("stagemousemove" , handleMouseMove);
         }
 
         function handleMouseUp(event) {
+            console.log("up " + event.pointerID);
             stage.removeEventListener("stagemousemove" , handleMouseMove);
         }
 
         function handleMouseMove(event) {
+            console.log("move " + event.pointerID);
             var midPoint = new createjs.Point(oldPoint.x + stage.mouseX>>1,
                                               oldPoint.y+stage.mouseY>>1);
 
