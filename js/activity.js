@@ -126,6 +126,15 @@ define(function (require) {
             stage.update();
         }
 
+        var clearButton = document.getElementById("clear-button");
+        clearButton.addEventListener('click', function (event) {
+            stage.clear();
+            stage.removeChild(shape);
+            shape = new createjs.Shape();
+            stage.addChild(shape);
+            stage.update();
+        });
+
         stage.update();
     });
 

@@ -2,6 +2,10 @@
   background-image: url(../activity/activity-icon.svg);
 }
 
+#main-toolbar #clear-button {
+  background-image: url(../icons/edit-clear.svg);
+}
+
 #paint-canvas {
   background-color: #ffffff;
 }
