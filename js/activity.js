@@ -88,8 +88,8 @@ define(function (require) {
         function handlePressDown(event) {
             console.log("down " + event.pointerID);
             var pointerData = {};
-            pointerData.oldPoint = new createjs.Point(stage.mouseX,
-                                                      stage.mouseY);
+            pointerData.oldPoint = new createjs.Point(event.stageX,
+                                                      event.stageY);
             pointerData.oldMidPoint = pointerData.oldPoint;
             pointers[event.pointerID] = pointerData;
             if (pointers.length == 1) {
@@ -109,16 +109,16 @@ define(function (require) {
             console.log("move " + event.pointerID);
             pointerData = pointers[event.pointerID];
             var midPoint = new createjs.Point(
-                pointerData.oldPoint.x + stage.mouseX>>1,
-                pointerData.oldPoint.y + stage.mouseY>>1);
+                pointerData.oldPoint.x + event.stageX>>1,
+                pointerData.oldPoint.y + event.stageY>>1);
 
             shape.graphics.clear().setStrokeStyle(strokeSize, 'round', 'round').
                 beginStroke(strokeColor).moveTo(midPoint.x, midPoint.y).
                 curveTo(pointerData.oldPoint.x, pointerData.oldPoint.y,
                         pointerData.oldMidPoint.x, pointerData.oldMidPoint.y);
 
-            pointerData.oldPoint.x = stage.mouseX;
-            pointerData.oldPoint.y = stage.mouseY;
+            pointerData.oldPoint.x = event.stageX;
+            pointerData.oldPoint.y = event.stageY;
 
             pointerData.oldMidPoint.x = midPoint.x;
             pointerData.oldMidPoint.y = midPoint.y;
