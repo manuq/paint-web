@@ -90,7 +90,7 @@ define(function (require) {
             var pointerData = {};
             pointerData.oldPoint = new createjs.Point(stage.mouseX,
                                                       stage.mouseY);
-            pointerData.oldMidPoint = oldPoint;
+            pointerData.oldMidPoint = pointerData.oldPoint;
             pointers[event.pointerID] = pointerData;
             if (pointers.length == 1) {
                 stage.addEventListener("stagemousemove" , handlePressMove);
