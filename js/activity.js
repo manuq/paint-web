@@ -1,5 +1,6 @@
 define(function (require) {
     var activity = require("sugar-web/activity/activity");
+    var colorpalette = require("activity/colorpalette");
     require("easel");
 
     // Manipulate the DOM only when it is ready.
@@ -125,6 +126,26 @@ define(function (require) {
 
             stage.update();
         }
+
+        // Color palette.
+
+        function onColorChange(event) {
+            strokeColor = event.target.style.backgroundColor;
+            colorsButton.style.backgroundColor = strokeColor;
+            colorInvoker.style.backgroundColor = strokeColor;
+        }
+
+        var colorsButton = document.getElementById("colors-button");
+        colorPalette = new colorpalette.ColorPalette(colorsButton, undefined,
+                                                     onColorChange);
+
+        var colorInvoker = colorPalette.getPalette().
+            querySelector('.palette-invoker');
+
+        // Select the first color of the palette.
+        colorPalette.setColor(0);
+
+        // Clear button.
 
         var clearButton = document.getElementById("clear-button");
         clearButton.addEventListener('click', function (event) {
