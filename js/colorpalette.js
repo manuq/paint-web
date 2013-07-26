@@ -3,10 +3,20 @@ define(["sugar-web/graphics/palette", "mustache"],
 
     var colorpalette = {};
 
-    colorpalette.ColorPalette = function (invoker, primaryText, callback) {
+    colorpalette.ColorPalette = function (invoker, primaryText) {
         palette.Palette.call(this, invoker, primaryText);
 
-        this.callback = callback;
+        this.colorChangeEvent = new CustomEvent(
+            "colorChange",
+            {
+                detail: {
+                    color: "#ed2529"
+                },
+                bubbles: true,
+                cancelable: true
+            }
+        );
+
         this.template =
             '<tbody>' +
             '{{#rows}}' +
@@ -45,13 +55,13 @@ define(["sugar-web/graphics/palette", "mustache"],
         var that = this;
 
         function popDownOnButtonClick(event) {
+            that.colorChangeEvent.detail.color =
+                event.target.style.backgroundColor;
+            that.getPalette().dispatchEvent(that.colorChangeEvent);
             that.popDown();
         }
 
         for (var i = 0; i < this.buttons.length; i++) {
-            if (this.callback) {
-                this.buttons[i].addEventListener('click', this.callback);
-            }
             this.buttons[i].addEventListener('click', popDownOnButtonClick);
         }
 
@@ -64,10 +74,20 @@ define(["sugar-web/graphics/palette", "mustache"],
         this.buttons[index].dispatchEvent(event);
     }
 
+    var addEventListener = function (type, listener, useCapture) {
+        return this.getPalette().addEventListener(type, listener, useCapture);
+    }
+
     colorpalette.ColorPalette.prototype =
         Object.create(palette.Palette.prototype, {
             setColor: {
                 value: setColor,
+                enumerable: true,
+                configurable: true,
+                writable: true
+            },
+            addEventListener: {
+                value: addEventListener,
                 enumerable: true,
                 configurable: true,
                 writable: true

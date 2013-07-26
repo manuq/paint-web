@@ -124,14 +124,14 @@ define(function (require) {
         // Color palette.
 
         function onColorChange(event) {
-            strokeColor = event.target.style.backgroundColor;
-            colorsButton.style.backgroundColor = strokeColor;
-            colorInvoker.style.backgroundColor = strokeColor;
+            strokeColor = event.detail.color;
+            colorsButton.style.backgroundColor = event.detail.color;
+            colorInvoker.style.backgroundColor = event.detail.color;
         }
 
         var colorsButton = document.getElementById("colors-button");
-        colorPalette = new colorpalette.ColorPalette(colorsButton, undefined,
-                                                     onColorChange);
+        colorPalette = new colorpalette.ColorPalette(colorsButton, undefined);
+        colorPalette.addEventListener('colorChange', onColorChange);
 
         var colorInvoker = colorPalette.getPalette().
             querySelector('.palette-invoker');
