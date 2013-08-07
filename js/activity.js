@@ -11,17 +11,61 @@ define(function (require) {
 
         var paintCanvas = document.getElementById("paint-canvas");
 
+        function serializeCanvas() {
+            return paintCanvas.toDataURL();
+        }
+
+        function deserializeCanvas(data) {
+            var image = new Image();
+            image.onload = function() {
+                paintCanvas.width = image.width;
+                paintCanvas.height = image.height;
+                paintCanvas.getContext("2d").drawImage(image, 0, 0);
+            };
+
+            image.src = data;
+        }
+
+        activity.write = function (callback) {
+
+            var data = {
+                image: serializeCanvas()
+            };
+
+            console.log("writing...");
+
+            var jsonData = JSON.stringify(data);
+            this.getDatastoreObject().setDataAsText(jsonData);
+
+            this.getDatastoreObject().save(function (error) {
+                if (error === null) {
+                    console.log("write done.");
+                }
+                else {
+                    console.log("write failed.");
+                }
+                callback(error);
+            });
+        };
+
+        var datastoreObject = activity.getDatastoreObject();
+        function onLoaded(error, metadata, jsonData) {
+            var data = JSON.parse(jsonData);
+            deserializeCanvas(data.image);
+        }
+        datastoreObject.loadAsText(onLoaded);
+
         var updateSizes = function () {
             var toolbarElem = document.getElementById("main-toolbar");
             var height = window.innerHeight - toolbarElem.offsetHeight - 5;
             paintCanvas.width = window.innerWidth - 5;
             paintCanvas.height = height;
-        }
+        };
         updateSizes();
 
         window.onresize = function (event) {
                 updateSizes();
-        }
+        };
 
         var stage = new createjs.Stage(paintCanvas);
 
@@ -52,7 +96,7 @@ define(function (require) {
         var oldPoint;
         var oldMidPoint;
 
-        var shape = new createjs.Shape();
+        shape = new createjs.Shape();
         stage.addChild(shape);
 
         // add handler for stage mouse events:
@@ -96,7 +140,7 @@ define(function (require) {
 
         function handlePressUp(event) {
             pointers.splice(pointers[event.pointerID], 1);
-            if (pointers.length == 0) {
+            if (pointers.length === 0) {
                 stage.removeEventListener("stagemousemove" , handlePressMove);
             }
         }
