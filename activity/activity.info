@@ -1,5 +1,5 @@
 [Activity]
-name = Paint Activity
+name = Paint
 activity_version = 1
 bundle_id = org.sugarlabs.PaintActivity
 exec = sugar-activity-web
